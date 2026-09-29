@@ -28,7 +28,7 @@ const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(express.json({ limit: "1mb" }));
 
-function publicProposal(proposal: ProposalRecord) {
+function adminProposal(proposal: ProposalRecord) {
   return {
     id: proposal.id,
     publicToken: proposal.publicToken,
@@ -37,6 +37,33 @@ function publicProposal(proposal: ProposalRecord) {
     contactName: proposal.contactName,
     contactEmail: proposal.contactEmail,
     kamName: proposal.kamName,
+    opportunityNumber: proposal.opportunityNumber,
+    title: proposal.title,
+    status: proposal.status,
+    accessType: proposal.accessType,
+    format: proposal.format,
+    expiresAt: proposal.expiresAt,
+    createdAt: proposal.createdAt,
+    views: proposal.views,
+    lastViewedAt: proposal.lastViewedAt
+  };
+}
+
+function maskEmail(email: string) {
+  const [name, domain] = email.split("@");
+  if (!domain) return "***";
+  const visible = name.slice(0, Math.min(2, name.length));
+  return `${visible}***@${domain}`;
+}
+
+function publicMetadata(proposal: ProposalRecord) {
+  return {
+    id: proposal.id,
+    publicToken: proposal.publicToken,
+    clientName: proposal.clientName,
+    contactName: "",
+    contactEmail: maskEmail(proposal.contactEmail),
+    kamName: "TIBOX",
     opportunityNumber: proposal.opportunityNumber,
     title: proposal.title,
     status: proposal.status,
@@ -60,7 +87,7 @@ app.get("/api/health", (_request, response) => {
 app.get("/api/proposals", async (_request, response, next) => {
   try {
     const proposals = await listProposals();
-    response.json(proposals.map(publicProposal));
+    response.json(proposals.map(adminProposal));
   } catch (error) {
     next(error);
   }
@@ -124,7 +151,7 @@ app.post("/api/proposals", upload.single("file"), async (request, response, next
     await insertProposal(proposal, asset);
 
     response.status(201).json({
-      ...publicProposal(proposal),
+      ...adminProposal(proposal),
       privateUrl: `${corsOrigin}/p/${publicToken}`
     });
   } catch (error) {
@@ -143,7 +170,7 @@ app.get("/api/public/proposals/:token", async (request, response, next) => {
       response.status(410).json({ error: "Proposal expired." });
       return;
     }
-    response.json(publicProposal(proposal));
+    response.json(publicMetadata(proposal));
   } catch (error) {
     next(error);
   }
