@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  font-family: Montserrat, "Segoe UI", Arial, sans-serif;
+  color: #f8fafc;
+  background: #031126;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { min-height: 100%; margin: 0; }
+
+body {
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 10% -10%, rgba(18,177,253,.18), transparent 30%),
+    radial-gradient(circle at 95% 0%, rgba(252,199,3,.08), transparent 22%),
+    linear-gradient(180deg,#031126 0%,#041429 100%);
+}
+
+button, input, select { font: inherit; }
+
+.glass {
+  background: rgba(7, 27, 54, .76);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  backdrop-filter: blur(16px);
+}
+
+.tibox-grid {
+  background-image:
+    linear-gradient(rgba(18,177,253,.035) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(18,177,253,.035) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
